@@ -1,12 +1,7 @@
 import { SerialPort } from 'serialport';
 import { EventEmitter } from 'events';
 
-interface HH42Options {
-  baudRate?: number;
-  dataBits?: 5 | 6 | 7 | 8;
-  stopBits?: 1 | 2;
-  parity?: 'none' | 'even' | 'odd' | 'mark' | 'space';
-}
+
 
 class HH42 extends EventEmitter {
   private portTemperature: SerialPort | null = null;
@@ -16,19 +11,18 @@ class HH42 extends EventEmitter {
   /**
    * Initialize the serial port for communication with the HH42 thermometer
    * @param portName The name of the serial port to connect to
-   * @param options Optional SerialPort configuration options
    */
-  initializeSerialPort(portName: string, options: HH42Options = {}): void {
+  initializeSerialPort(portName: string): void {
     this.stopTemperatureReading();
     if (this.portTemperature && this.portTemperature.isOpen) {
       this.portTemperature.close();
     }
     this.portTemperature = new SerialPort({
       path: portName,
-      baudRate: options.baudRate || 9600,
-      dataBits: options.dataBits || 8,
-      stopBits: options.stopBits || 1,
-      parity: options.parity || 'none',
+      baudRate: 9600,
+      dataBits: 8,
+      stopBits: 1,
+      parity: 'none',
     });
 
     this.portTemperature.on('data', (data: Buffer) => {
